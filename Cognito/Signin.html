@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Signin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://d2gcbvkpcschxy.cloudfront.net/20210601212208/css/bootstrap.min.css" rel="stylesheet" media="screen" />
+    <link href="https://d2gcbvkpcschxy.cloudfront.net/20210601212208/css/cognito-login.css" rel="stylesheet" media="screen" />
+    <script src="https://d2gcbvkpcschxy.cloudfront.net/20210601212208/js/amazon-cognito-advanced-security-data.min.js"></script>
+    <script>
+        function getAdvancedSecurityData(formReference) {
+            if (typeof AmazonCognitoAdvancedSecurityData === "undefined") {
+                return true;
+            }
+
+            // UserpoolId is not available on frontend for springboard. We do not use userPoolId
+            // anyway other than put in context data. 
+            var userPoolId = "";
+            var clientId = getUrlParameter("client_id");
+
+            var username = "";
+            var usernameInput = document.getElementsByName("username")[0];
+            if (usernameInput && usernameInput.value) {
+                username = usernameInput.value;
+            }
+
+            var asfData = AmazonCognitoAdvancedSecurityData.getData(username, userPoolId, clientId);
+            if (typeof asfData === "undefined") {
+                return true;
+            }
+
+            if (formReference && formReference.cognitoAsfData) {
+                formReference.cognitoAsfData.value = asfData
+            }
+
+            return true;
+        }
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        function onSubmit(evt, formRef) {
+            formRef.querySelector('button[type="submit"]').disabled = true;
+            if (!!formRef.submitted) {
+                evt.preventDefault();
+                return false;
+            } else {
+                formRef.submitted = true;
+                return getAdvancedSecurityData(formRef);
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="modal-dialog">
+            <div class="modal-content background-customizable modal-content-mobile visible-xs visible-sm">
+                <!-- Banner 부분을 Cusomizing 할 수 있는 영역으로 보임 -->
+                <div><div><div class="banner-customizable"><center></center></div></div></div>
+                <div class="modal-body">
+                    <div><div></div></div>
+                    <div>
+                        <div><div></div></div>
+                        <div>
+                            <div>
+                                <div>
+                                    <span class="idpDescription-customizable">Sign In with your social account</span>
+
+                                    <button
+                                        name="googleSignUpButton"
+                                        onclick="window.location.href=&#39;/oauth2/authorize?identity_provider=Google&amp;redirect_uri=http://localhost:8080/callback&amp;response_type=CODE&amp;client_id=7m6u4j1iv8pelveiq12lneo2f0&amp;scope=aws.cognito.signin.user.admin email openid phone profile&#39;"
+                                        class="btn google-button socialButton-customizable"
+                                    >
+                                        <span>
+                                            <svg
+                                                class="social-logo"
+                                                viewBox="0 0 256 262"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                preserveAspectRatio="xMidYMid"
+                                            >
+                                                <path
+                                                    d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
+                                                    fill="#4285F4">
+                                                </path>
+                                                <path
+                                                    d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
+                                                    fill="#34A853">
+                                                </path>
+                                                <path
+                                                    d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
+                                                    fill="#FBBC05">
+                                                </path>
+                                                <path
+                                                    d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
+                                                    fill="#EA4335">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                        <span>Continue with Google</span>
+                                    </button>
+                                    <br />
+                                    <span class="legalText-customizable">
+                                        We won&#39;t post to any of your accounts without asking first
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="login-or">
+                                <hr class="hr-or">
+                                <span class="span-or background-customizable ">or</span>
+                            </div>
+                            <div>
+                                <div>
+
+                                    <span class="textDescription-customizable ">
+                                        Sign in with your username and password
+                                    </span>
+                                    <form
+                                        action="/login?client_id=7m6u4j1iv8pelveiq12lneo2f0&amp;response_type=code&amp;scope=aws.cognito.signin.user.admin+email+openid+phone+profile&amp;redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback"
+                                        method="POST"
+                                        name="cognitoSignInForm"
+                                        class="cognito-asf"
+                                        onsubmit="getAdvancedSecurityData(this);"
+                                    >
+                                        <input type="hidden" name="_csrf" value="5e9c53f3-b0e2-4c93-8c8c-eb9dc711bbab" />
+
+                                        <label for="signInFormUsername" class="label-customizable">Username</label>
+                                        <div>
+                                            <input
+                                                id="signInFormUsername" 
+                                                name="username"
+                                                type="text"
+                                                class="form-control inputField-customizable"
+                                                placeholder="Username"
+                                                autocapitalize="none"
+                                                required
+                                            >
+                                        </div>
+
+                                        <label for="signInFormPassword" class="label-customizable">Password</label>
+                                        <div>
+                                            <input
+                                                id="signInFormPassword"
+                                                name="password"
+                                                type="password"
+                                                class="form-control inputField-customizable"
+                                                placeholder="Password"
+                                                required
+                                            >
+                                        </div>
+
+                                        <input type="hidden" class="form-control inputField-customizable" name="cognitoAsfData" />
+                                        <a
+                                            class="redirect-customizable"
+                                            href="/forgotPassword?client_id=7m6u4j1iv8pelveiq12lneo2f0&amp;response_type=code&amp;scope=aws.cognito.signin.user.admin+email+openid+phone+profile&amp;redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback">
+                                            Forgot your password?
+                                        </a>
+                                        <input
+                                            name="signInSubmitButton"
+                                            type="Submit"
+                                            value="Sign in"
+                                            class="btn btn-primary submitButton-customizable"
+                                            aria-label="submit"
+                                        />
+                                        <br />
+                                        <div>
+                                            <p class="redirect-customizable">
+                                                <span>Need an account?</span>
+                                                &nbsp;
+                                                <a href="/signup?client_id=7m6u4j1iv8pelveiq12lneo2f0&amp;response_type=code&amp;scope=aws.cognito.signin.user.admin+email+openid+phone+profile&amp;redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback">
+                                                    Sign up
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-content background-customizable modal-content-desktop visible-md visible-lg">
+                <div><div><div class="banner-customizable"><center></center></div></div></div>
+                <div class="modal-body">
+                    <div><div></div></div>
+                    <div>
+                        <div class="panel panel-right-border col-md-6 col-lg-6">
+                            <div><div></div></div>
+                            <div>
+                                <div>
+                                    <div>
+                                        <span class="idpDescription-customizable">
+                                            Sign In with your social account
+                                        </span>
+
+                                        <button
+                                            name="googleSignUpButton"
+                                            onclick="window.location.href=&#39;/oauth2/authorize?identity_provider=Google&amp;redirect_uri=http://localhost:8080/callback&amp;response_type=CODE&amp;client_id=7m6u4j1iv8pelveiq12lneo2f0&amp;scope=aws.cognito.signin.user.admin email openid phone profile&#39;"
+                                            class="btn google-button socialButton-customizable"
+                                        >
+                                            <span>
+                                                <svg
+                                                    class="social-logo"
+                                                    viewBox="0 0 256 262"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    preserveAspectRatio="xMidYMid"
+                                                >
+                                                    <path
+                                                        d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
+                                                        fill="#4285F4">
+                                                    </path>
+                                                    <path
+                                                        d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
+                                                        fill="#34A853">
+                                                    </path>
+                                                    <path
+                                                        d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
+                                                        fill="#FBBC05">
+                                                    </path>
+                                                    <path
+                                                        d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
+                                                        fill="#EA4335">
+                                                    </path>
+                                                </svg>
+                                            </span>
+                                            <span>Continue with Google</span>
+                                        </button>
+
+                                        <br />
+                                        <span class="legalText-customizable">
+                                            We won&#39;t post to any of your accounts without asking first
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-left-border col-md-6 col-lg-6">
+                            <div class="span-or-verical background-customizable">or</div>
+                            <div>
+                                <div>
+                                    <span class="textDescription-customizable ">
+                                        Sign in with your username and password
+                                    </span>
+                                    <form
+                                        action="/login?client_id=7m6u4j1iv8pelveiq12lneo2f0&amp;response_type=code&amp;scope=aws.cognito.signin.user.admin+email+openid+phone+profile&amp;redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback"
+                                        method="POST"
+                                        name="cognitoSignInForm"
+                                        class="cognito-asf"
+                                        onsubmit="getAdvancedSecurityData(this);"
+                                    >
+                                        <input type="hidden" name="_csrf" value="5e9c53f3-b0e2-4c93-8c8c-eb9dc711bbab" />
+
+                                        <label for="signInFormUsername" class="label-customizable">Username</label>
+                                        <div>
+                                            <input
+                                                id="signInFormUsername"
+                                                name="username"
+                                                type="text"
+                                                class="form-control inputField-customizable"
+                                                placeholder="Username"
+                                                autocapitalize="none"
+                                                required
+                                            >
+                                        </div>
+
+                                        <label for="signInFormPassword" class="label-customizable">Password</label>
+                                        <div>
+                                            <input
+                                                id="signInFormPassword"
+                                                name="password"
+                                                type="password"
+                                                class="form-control inputField-customizable"
+                                                placeholder="Password"
+                                                required
+                                            >
+                                        </div>
+                                        <input type="hidden" class="form-control inputField-customizable" name="cognitoAsfData" />
+                                        <a
+                                            class="redirect-customizable"
+                                            href="/forgotPassword?client_id=7m6u4j1iv8pelveiq12lneo2f0&amp;response_type=code&amp;scope=aws.cognito.signin.user.admin+email+openid+phone+profile&amp;redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback"
+                                        >
+                                            Forgot your password?
+                                        </a>
+                                        <input
+                                            name="signInSubmitButton"
+                                            type="Submit"
+                                            value="Sign in"
+                                            class="btn btn-primary submitButton-customizable"
+                                            aria-label="submit"
+                                        />
+                                        <br />
+                                        <div>
+                                            <p class="redirect-customizable">
+                                                <span>Need an account?</span>
+                                                &nbsp;
+                                                <a href="/signup?client_id=7m6u4j1iv8pelveiq12lneo2f0&amp;response_type=code&amp;scope=aws.cognito.signin.user.admin+email+openid+phone+profile&amp;redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback">
+                                                    Sign up
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://d2gcbvkpcschxy.cloudfront.net/20210601212208/js/jquery-3.5.1.min.js"></script>
+    <script>
+        var $inputs = $(":input");
+        $inputs.on('input', function () {
+            var self = this;
+            var matches = $('input[name="' + this.name + '"]');
+            var selfIndex = matches.index($(self));
+            matches.each(function (index, element) {
+                if (selfIndex !== index) {
+                    $(element).val($(self).val());
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
